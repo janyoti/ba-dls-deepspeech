@@ -22,22 +22,24 @@ def main(data_directory, output_file):
     keys = []
     for group in os.listdir(data_directory):
         speaker_path = os.path.join(data_directory, group)
-        for speaker in os.listdir(speaker_path):
-            labels_file = os.path.join(speaker_path, speaker,
-                                       '{}-{}.trans.txt'
-                                       .format(group, speaker))
-            for line in open(labels_file):
-                split = line.strip().split()
-                file_id = split[0]
-                label = ' '.join(split[1:]).lower()
-                audio_file = os.path.join(speaker_path, speaker,
-                                          file_id) + '.wav'
-                audio = wave.open(audio_file)
-                duration = float(audio.getnframes()) / audio.getframerate()
-                audio.close()
-                keys.append(audio_file)
-                durations.append(duration)
-                labels.append(label)
+        if os.path.isdir(speaker_path):
+            for speaker in os.listdir(speaker_path):
+                labels_file = os.path.join(speaker_path, speaker,
+                                           '{}-{}.trans.txt'
+                                           .format(group, speaker))
+                if os.path.isfile(labels_file):
+                    for line in open(labels_file):
+                        split = line.strip().split()
+                        file_id = split[0]
+                        label = ' '.join(split[1:]).lower()
+                        audio_file = os.path.join(speaker_path, speaker,
+                                                  file_id) + '.wav'
+                        audio = wave.open(audio_file)
+                        duration = float(audio.getnframes()) / audio.getframerate()
+                        audio.close()
+                        keys.append(audio_file)
+                        durations.append(duration)
+                        labels.append(label)
     with open(output_file, 'w') as out_file:
         for i in range(len(keys)):
             line = json.dumps({'key': keys[i], 'duration': durations[i],
