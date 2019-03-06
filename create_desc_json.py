@@ -40,6 +40,9 @@ def main(data_directory, output_file):
                         keys.append(audio_file)
                         durations.append(duration)
                         labels.append(label)
+
+    durations, keys, labels = zip(*sorted(zip(durations, keys, labels)))
+
     with open(output_file, 'w') as out_file:
         for i in range(len(keys)):
             line = json.dumps({'key': keys[i], 'duration': durations[i],
